@@ -1,28 +1,37 @@
-from secrets import *
-import tweepy
-from pymongo import MongoClient
+from fastapi import FastAPI
+from src.services import get_trends
+import uvicorn
+from pydantic import BaseModel
 
-client = MongoClient("")
+#client = MongoClient("")
 
-db = client.my_test
+#db = client.my_test
 
-tweets_collection = db.tweets
+#tweets_collection = db.tweets
 
-tweets_collection.insert_one({"author": "test", "text": "text"})
+#tweets_collection.insert_one({"author": "test", "text": "text"})
 
-tweets = tweets_collection.find({})
+#tweets = tweets_collection.find({})
 
-print(list(tweets))
+#print(list(tweets))
+
+
+class TrendItem(BaseModel):
+    name: str
+    url: str
+
 
 BRAZIL_WOE_ID = 23424768
 
-auth = tweepy.OAuthHandler(consumer_key=CONSUMER_KEY, consumer_secret=CONSUMER_SECRET)
+app = FastAPI()
 
-auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
-api = tweepy.API(auth)
+@app.get("/trends", response_model=List[TrendItem])
+def get_trends_route():
+    trend = get_trends(woe_id=BRAZIL_WOE_ID)
 
-trends = api.trends_place(BRAZIL_WOE_ID)
+    return trend
 
-for tweet in trends:
-    print(tweet)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
