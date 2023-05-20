@@ -1,11 +1,11 @@
 import tweepy
-from secrets import CONSUMER_SECRET, CONSUMER_KEY, ACCESS_TOKEN_SECRET, ACCESS_TOKEN
+from secrets import *
 from typing import Any, Dict, List
 
 
 def get_trends(woe_id: int) -> List[Dict[str, Any]]:
 
-    auth = tweepy.OAuthHandler(consumer_key=CONSUMER_KEY, consumer_secret=CONSUMER_SECRET)
+    auth = tweepy.OAuthHandler(api_key=API_KEY, api_key_secret=API_KEY_SECRET)
 
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 
@@ -13,4 +13,4 @@ def get_trends(woe_id: int) -> List[Dict[str, Any]]:
 
     trends = api.trends_place(woe_id)
 
-    return [trend for trend in trends]
+    return trends[0]["trends"]
